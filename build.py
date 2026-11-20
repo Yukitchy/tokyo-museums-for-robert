@@ -32,7 +32,7 @@ POINTS = [
  ("Tickets", "Two on this list are reservation-only and sell out: the Ghibli Museum and the Fujiko F. Fujio Museum. Tickets go on sale about a month ahead — set a reminder. Everywhere else, you can just walk in."),
  ("Note", "Hours below were checked in November 2026. Please double-check the official site before you go."),
 ]
-OG = os.environ.get("OG", "1")
+OG = os.environ.get("OG", "3")
 # map pins: lat, lng, card shift (l/r/""), card below the point (for the Ueno/Ryogoku 2x2 cluster)
 LL = {"edo-tokyo.jpg": (35.6965, 139.7957, "l", 1), "tnm.jpg": (35.7189, 139.7766, "l", 0),
       "hokusai.jpg": (35.6967, 139.8008, "r", 1), "tatemonoen.jpg": (35.7155, 139.5124, "l", 0),
@@ -134,7 +134,7 @@ h1{{margin:14px 0 4px;font-size:min(8.2vw,62px);line-height:.95}}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 var P={PINS},M={{}},map=L.map("map",{{scrollWheelZoom:false,zoomSnap:.25}});
-L.tileLayer("https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png",{{maxZoom:18,attribution:"&copy; OpenStreetMap"}}).addTo(map);
+L.tileLayer("https://{{s}}.basemaps.cartocdn.com/dark_all/{{z}}/{{x}}/{{y}}{{r}}.png",{{maxZoom:18,attribution:"&copy; OpenStreetMap contributors &copy; CARTO"}}).addTo(map);
 P.forEach(function(p){{
   var h='<div class="tp '+(p.s||"")+(p.d?" d":"")+'"><div class="tc"><div class="th">'+p.n+'</div><div class="tf" style="background-image:url('+p.img+')"></div></div><div class="tl"></div></div>';
   M[p.n]=L.marker([p.lat,p.lng],{{icon:L.divIcon({{className:"pi",iconSize:[46,59],iconAnchor:[23,p.d?0:59],popupAnchor:[0,p.d?6:-56],html:h}}),title:p.n+". "+p.name,zIndexOffset:p.d?0:100}})
