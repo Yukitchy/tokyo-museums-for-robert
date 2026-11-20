@@ -135,7 +135,7 @@ h1{{margin:14px 0 4px;font-size:min(8.2vw,62px);line-height:.95}}
 <script>
 var P={PINS},M={{}},map=L.map("map",{{scrollWheelZoom:false,zoomSnap:.25}});
 // CARTO basemaps now return "API KEY REQUIRED" tiles (2026-11-21) -> Esri Dark Gray Canvas (keyless)
-L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{{z}}/{{y}}/{{x}}",{{maxZoom:18,maxNativeZoom:16,attribution:"Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors"}}).addTo(map);
+L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{{z}}/{{y}}/{{x}}",{{maxZoom:18,maxNativeZoom:16,attribution:"&copy; Esri, HERE, Garmin &copy; OpenStreetMap"}}).addTo(map);
 L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{{z}}/{{y}}/{{x}}",{{maxZoom:18,maxNativeZoom:16}}).addTo(map);
 P.forEach(function(p){{
   var h='<div class="tp '+(p.s||"")+(p.d?" d":"")+'"><div class="tc"><div class="th">'+p.n+'</div><div class="tf" style="background-image:url('+p.img+')"></div></div><div class="tl"></div></div>';
