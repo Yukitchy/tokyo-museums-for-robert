@@ -1,0 +1,80 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>地図タイル見比べ — Tokyo Museums for Robert</title><meta name="robots" content="noindex,nofollow">
+<meta property="og:type" content="website"><meta property="og:title" content="地図タイル見比べ 5案"><meta property="og:description" content="ゲストページ地図の新標準候補。同じ11館・同じピンで5種類のタイルを並べました。">
+<meta property="og:url" content="https://yukitchy.github.io/tokyo-museums-for-robert/tiles/">
+<meta property="og:image" content="https://yukitchy.github.io/tokyo-museums-for-robert/tiles/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://yukitchy.github.io/tokyo-museums-for-robert/tiles/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 fill=%22%23121212%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2236%22 height=%2236%22 fill=%22%23D9342B%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#121212;color:#fff;font:16px/1.5 Archivo,"Noto Sans JP",sans-serif;overflow-x:hidden}
+.col{max-width:760px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px))}
+header{padding:40px 0 8px}
+h1{margin:0;font:900 clamp(24px,7vw,40px)/1.15 "Noto Sans JP",sans-serif}h1:after{content:"";display:block;width:56px;height:6px;background:#D9342B;margin-top:14px}
+header p{margin:14px 0 0;color:#bbb;font-size:14px;font-weight:700}
+section{margin:36px 0 0}
+h2{margin:0 0 10px;font:900 18px/1.3 Archivo,"Noto Sans JP",sans-serif;display:flex;align-items:baseline;gap:10px}h2 b{color:#D9342B;font-size:26px;line-height:1}
+h2 i{font-style:normal;white-space:nowrap;font-size:min(18px,5vw)}h2 span{display:block;color:#bbb;font-size:13px;font-weight:700}
+.map{height:min(118vw,520px);background:#dcdad4;z-index:0;font:inherit;color:#121212}
+footer{margin:40px 0 0;padding:20px 0 48px;border-top:1px solid #333;color:#bbb;font-size:13px;font-weight:700}
+/* pins: copied from the museum page */
+.pi{background:none;border:0}
+.tp{width:46px;display:flex;flex-direction:column;align-items:center;cursor:pointer}.tp.d{flex-direction:column-reverse}
+.tc{width:46px;background:#121212;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.4);overflow:hidden}
+@media(max-width:359px){.tp{transform:scale(.8);transform-origin:50% 100%}.tp.d{transform-origin:50% 0}}
+.tp.l .tc{transform:translateX(-25px)}.tp.r .tc{transform:translateX(25px)}
+.th{background:#121212;color:#fff;text-align:center;font:900 13px/1 Archivo,sans-serif;padding:3px 0}
+.tf{height:30px;background-size:cover;background-position:center}
+.tl{width:0;height:0;border:6px solid transparent;border-top:8px solid #121212;border-bottom:0}.tp.d .tl{border-top:0;border-bottom:8px solid #121212}
+.leaflet-popup-content{font:15px/1.35 Archivo,sans-serif;margin:10px 12px}.leaflet-popup-content b{display:block;font-weight:800;margin-bottom:4px}.leaflet-popup-content a{color:#D9342B;font-weight:800}
+/* ?og : 1200x630 card for og.png */
+.og body,html.og body{width:1200px;height:630px;overflow:hidden}
+.og header{padding:44px 48px 0}.og h1{font-size:52px;white-space:nowrap}.og header p{display:none}
+.og .col{max-width:none;padding:0}.og #maps{display:flex;gap:12px;padding:30px 48px 0}
+.og section{margin:0;flex:1;min-width:0}.og h2{font-size:15px;white-space:nowrap;overflow:hidden;margin-bottom:8px}.og h2 b{font-size:20px}.og h2 i{font-size:18px}.og h2 span{display:none}
+.og .map{height:388px}.og .leaflet-control-container,.og footer{display:none}
+.og .tp{transform:scale(.7);transform-origin:50% 100%}.og .tp.d{transform-origin:50% 0}
+</style></head><body>
+<div class="col">
+<header><h1>地図タイル見比べ 5案</h1><p>博物館ページと同じ11館・同じピン・同じ初期表示で、地図の下地だけを変えています。どれもドラッグ・ズームできます。番号で返事をください。</p></header>
+<div id="maps"></div>
+<footer>本番ページの地図（ダーク）はまだ差し替えていません。本番はタイルに薄いグレー処理を掛けていますが、ここでは素のタイルを見せています。<br><a href="../" style="color:#fff">博物館ページへ戻る</a></footer>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var GSI='<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
+ESRI='https://server.arcgisonline.com/ArcGIS/rest/services/',
+T=[
+ {name:"地理院タイル・淡色地図",s:"地理院 淡色",note:"色を抑えた国土地理院の地図。ピンが一番目立つ",o:{maxNativeZoom:18,attribution:GSI},u:["https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png"]},
+ {name:"地理院タイル・標準地図",s:"地理院 標準",note:"国土地理院の標準。日本語の地名・路線がくっきり",o:{maxNativeZoom:18,attribution:GSI},u:["https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png"]},
+ {name:"Esri World Light Gray Canvas",s:"Esri Light Gray",note:"いまのダークの明るい版。英語ラベル",o:{maxNativeZoom:16,attribution:"&copy; Esri, HERE, Garmin &copy; OpenStreetMap"},u:[ESRI+"Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",ESRI+"Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}"]},
+ {name:"Esri World Street Map",s:"Esri Street Map",note:"Googleマップに近い色付きの道路地図。英語ラベル",o:{maxNativeZoom:18,attribution:"&copy; Esri, HERE, Garmin, USGS &copy; OpenStreetMap"},u:[ESRI+"World_Street_Map/MapServer/tile/{z}/{y}/{x}"]},
+ {name:"Esri World Imagery＋地名",s:"Esri 航空写真",note:"航空写真に英語の地名を重ねたもの",o:{maxNativeZoom:18,attribution:"&copy; Esri, Maxar, Earthstar Geographics"},u:[ESRI+"World_Imagery/MapServer/tile/{z}/{y}/{x}",ESRI+"Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"]}
+],OG=/[?&]og\b/.test(location.search),ST=window.ST=[];
+if(OG)document.documentElement.className="og";
+// pins: read straight from the museum page (no re-typed data)
+fetch("../index.html").then(function(r){return r.text()}).then(function(s){
+ var F=[],P=JSON.parse(s.match(/var P=(\[.*?\]),M=/)[1]),box=document.getElementById("maps");
+ T.forEach(function(t,i){
+  var sec=document.createElement("section");
+  sec.innerHTML='<h2><b>'+(i+1)+'</b><div><i>'+(OG?t.s:t.name)+'</i><span>'+t.note+'</span></div></h2><div class="map" role="region" aria-label="'+(i+1)+'. '+t.name+'"></div>';
+  box.appendChild(sec);
+  var map=L.map(sec.lastChild,{scrollWheelZoom:false,zoomSnap:.25}),st=ST[i]={name:t.name,ok:0,err:0,pins:0,loaded:0};
+  t.u.forEach(function(u,j){
+   var o=L.extend({maxZoom:18},t.o);if(j)delete o.attribution;
+   L.tileLayer(u,o).on("tileload",function(){st.ok++}).on("tileerror",function(){st.err++}).on("load",function(){st.loaded++}).addTo(map);
+  });
+  P.forEach(function(p){
+   var img="../"+p.img,h='<div class="tp '+(p.s||"")+(p.d?" d":"")+'"><div class="tc"><div class="th">'+p.n+'</div><div class="tf" style="background-image:url('+img+')"></div></div><div class="tl"></div></div>';
+   L.marker([p.lat,p.lng],{icon:L.divIcon({className:"pi",iconSize:[46,59],iconAnchor:[23,p.d?0:59],popupAnchor:[0,p.d?6:-56],html:h}),title:p.n+". "+p.name,zIndexOffset:p.d?0:100})
+    .addTo(map).bindPopup('<b>'+p.n+'. '+p.name+'</b><a href="'+p.q+'" target="_blank" rel="noopener">Google Maps</a> · <a href="../#m'+p.n+'">See in list</a>');
+   st.pins++;
+  });
+  F.push(function(){map.invalidateSize();map.fitBounds(P.map(function(p){return [p.lat,p.lng]}),OG?{paddingTopLeft:[44,40],paddingBottomRight:[44,8]}:{paddingTopLeft:[52,64],paddingBottomRight:[52,16]})});
+ });
+ F.forEach(function(f){f()}); // fit after all panels exist (flex widths settle)
+});
+</script>
+</body></html>
