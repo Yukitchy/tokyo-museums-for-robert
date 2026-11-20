@@ -103,7 +103,6 @@ h1{{margin:14px 0 4px;font-size:min(8.2vw,62px);line-height:.95}}
 .tw{{position:relative;display:flex;flex-direction:column;min-width:0}}.tw .tile{{flex:1}}
 .num{{position:absolute;z-index:2;right:0;top:0;min-width:28px;height:28px;display:grid;place-items:center;background:var(--ink);color:#fff;font:900 15px/1 Archivo,sans-serif;text-decoration:none}}
 #map{{height:min(118vw,520px);background:#dcdad4;z-index:0;font:inherit}}
-#map .leaflet-tile-pane{{filter:grayscale(.55) contrast(.95)}}
 .mapnote{{margin:8px 0 0;font-size:13px;color:var(--mu);font-weight:700}}
 .pi{{background:none;border:0}}
 .tp{{width:46px;display:flex;flex-direction:column;align-items:center;cursor:pointer}}.tp.d{{flex-direction:column-reverse}}
@@ -134,9 +133,9 @@ h1{{margin:14px 0 4px;font-size:min(8.2vw,62px);line-height:.95}}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 var P={PINS},M={{}},map=L.map("map",{{scrollWheelZoom:false,zoomSnap:.25}});
-// CARTO basemaps now return "API KEY REQUIRED" tiles (2026-11-21) -> Esri Dark Gray Canvas (keyless)
-L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{{z}}/{{y}}/{{x}}",{{maxZoom:18,maxNativeZoom:16,attribution:"&copy; Esri, HERE, Garmin &copy; OpenStreetMap"}}).addTo(map);
-L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{{z}}/{{y}}/{{x}}",{{maxZoom:18,maxNativeZoom:16}}).addTo(map);
+// CARTO basemaps now return "API KEY REQUIRED" tiles (2026-11-21) -> Esri Light Gray Canvas (keyless, no filter; 2026-11-21 standard)
+L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{{z}}/{{y}}/{{x}}",{{maxZoom:18,maxNativeZoom:16,attribution:"&copy; Esri, HERE, Garmin &copy; OpenStreetMap"}}).addTo(map);
+L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{{z}}/{{y}}/{{x}}",{{maxZoom:18,maxNativeZoom:16}}).addTo(map);
 P.forEach(function(p){{
   var h='<div class="tp '+(p.s||"")+(p.d?" d":"")+'"><div class="tc"><div class="th">'+p.n+'</div><div class="tf" style="background-image:url('+p.img+')"></div></div><div class="tl"></div></div>';
   M[p.n]=L.marker([p.lat,p.lng],{{icon:L.divIcon({{className:"pi",iconSize:[46,59],iconAnchor:[23,p.d?0:59],popupAnchor:[0,p.d?6:-56],html:h}}),title:p.n+". "+p.name,zIndexOffset:p.d?0:100}})
